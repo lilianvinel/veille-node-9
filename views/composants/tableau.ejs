@@ -29,7 +29,7 @@
  <td class='nom' id="elmLigneDiv" contenteditable='true'><%= elm.nom %></td>
  <td class='prenom' id="elmLigneDiv" contenteditable='true'><%= elm.prenom %></td>
  <td class='tel' id="elmLigneDiv" contenteditable='true'><%= elm.telephone %></td>
- <td class='supprimer'><a href="/detruire/<%= elm._id %>"><i class="fas fa-trash-alt"></i></a></td>
+ <td class='supprimer'><a><i class="fas fa-trash-alt"></i></a></td>
  <td class='sauvegarder'><a><i class="far fa-save"></i></a></td>
  </tr>
  <% }) %>
@@ -42,7 +42,32 @@
  <input type = "hidden" placeholder="Téléphone" name = "telephone">
 </form>
 
-<script type="text/javascript"> 
+<script type="text/javascript">
+
+//FONCTION AJAX MODIFIER 
+let elmSuppr = document.querySelectorAll('.supprimer')
+
+for (elm of elmSuppr)
+ {
+ elm.addEventListener('click', function(){
+ 	let laLigneSuppr = this.parentNode
+ 	let id = laLigneSuppr.children[0].innerHTML
+
+ xhr = new XMLHttpRequest();
+xhr.open('POST', "ajax_detruire", true);
+let data = { 
+ "_id" : id
+}
+console.log(data)
+let sData = JSON.stringify(data);
+xhr.setRequestHeader('Content-type', 'application/json');
+xhr.send(sData);
+laLigneSuppr.style.display = "none"
+ })
+}
+
+
+//FONCTION AJAX MODIFIER
 let elmSauvegarder = document.querySelectorAll('.sauvegarder')
  console.log('elmSauvegarder = ' + elmSauvegarder.length)
  for (elm of elmSauvegarder)
@@ -66,7 +91,6 @@ let data = {
  "telephone" : telephone
 }
 
-console.log(data);
 let sData = JSON.stringify(data);
 xhr.setRequestHeader('Content-type', 'application/json');
 xhr.send(sData);
@@ -77,15 +101,11 @@ xhr.addEventListener("readystatechange", traiterRequest, false)
 
 function traiterRequest(e)
 {
- console.log(e);
- console.log("xhr.readyState = " + xhr.readyState)
- console.log("xhr.status = " + xhr.status)
+
  if(xhr.readyState == 4 && xhr.status == 200)
  {
- console.log('ajax fonctionne')
 let reponse = JSON.parse(xhr.responseText);
  console.log("reponse._id = " + reponse._id)
- console.log(xhr.responseText);
  }
 }
 </script>
