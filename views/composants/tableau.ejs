@@ -25,48 +25,67 @@
  </tr>
  <% adresses.forEach(elm => {%>
  <tr>
- <td class='id'><%= elm._id %></td>
- <td class='nom' contenteditable='true'><%= elm.nom %></td>
- <td class='prenom' contenteditable='true'><%= elm.prenom %></td>
- <td class='tel' contenteditable='true'><%= elm.telephone %></td>
+ <td class='id' id="elmLigneDiv"><%= elm._id %></td>
+ <td class='nom' id="elmLigneDiv" contenteditable='true'><%= elm.nom %></td>
+ <td class='prenom' id="elmLigneDiv" contenteditable='true'><%= elm.prenom %></td>
+ <td class='tel' id="elmLigneDiv" contenteditable='true'><%= elm.telephone %></td>
  <td class='supprimer'><a href="/detruire/<%= elm._id %>"><i class="fas fa-trash-alt"></i></a></td>
- <td class='sauvegarder'><a href="#"><i class="far fa-save"></i></a></td>
+ <td class='sauvegarder'><a><i class="far fa-save"></i></a></td>
  </tr>
  <% }) %>
  </table>
 
- <form class='mon_formulaire' action="/modifier" name='mon_formulaire' id='mon_formulaire_modifier' method="POST" >
+<form class='mon_formulaire' action="/ajax_modifier" name='mon_formulaire' id='mon_formulaire_modifier' method="POST" >
  <input type = "hidden" placeholder="_id" name = "_id">
  <input type = "hidden" placeholder="Nom" name = "nom"> 
  <input type = "hidden" placeholder="Prénom" name = "prenom">
  <input type = "hidden" placeholder="Téléphone" name = "telephone">
 </form>
 
-<script type="text/javascript">
- let elmSauver = document.querySelectorAll('.sauver')
- console.log('elmSauver = ' + elmSauver.length)
- for (elm of elmSauver)
+<script type="text/javascript"> 
+let elmSauvegarder = document.querySelectorAll('.sauvegarder')
+ console.log('elmSauvegarder = ' + elmSauvegarder.length)
+ for (elm of elmSauvegarder)
  {
  elm.addEventListener('click', function(){
 
- let laLigne = this.parentNode.parentNode
+ let laLigne = this.parentNode
+ console.log(this);
+
  let id = laLigne.children[0].innerHTML
  let nom = laLigne.children[1].innerHTML
  let prenom = laLigne.children[2].innerHTML
  let telephone = laLigne.children[3].innerHTML
- let courriel = laLigne.children[4].innerHTML
 
-let elmForm = document.getElementById('mon_formulaire_modifier')
- console.log(elmForm.tagName)
- let elmInput = elmForm.querySelectorAll('input')
- elmInput[0].value = id
- elmInput[1].value = nom
- elmInput[2].value = prenom
- elmInput[3].value = telephone
- elmInput[4].value = courriel
+ xhr = new XMLHttpRequest();
+xhr.open('POST', "ajax_modifier", true);
+let data = { 
+ "_id" : id, 
+ "nom" : nom,
+ "prenom" : prenom,
+ "telephone" : telephone
+}
 
-elmForm.submit()
+console.log(data);
+let sData = JSON.stringify(data);
+xhr.setRequestHeader('Content-type', 'application/json');
+xhr.send(sData);
+xhr.addEventListener("readystatechange", traiterRequest, false)
 
  })
- } 
+ }
+
+function traiterRequest(e)
+{
+ console.log(e);
+ console.log("xhr.readyState = " + xhr.readyState)
+ console.log("xhr.status = " + xhr.status)
+ if(xhr.readyState == 4 && xhr.status == 200)
+ {
+ console.log('ajax fonctionne')
+let reponse = JSON.parse(xhr.responseText);
+ console.log("reponse._id = " + reponse._id)
+ console.log(xhr.responseText);
+ }
+}
 </script>
