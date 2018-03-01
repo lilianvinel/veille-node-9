@@ -1,0 +1,72 @@
+<%
+	let objOrdre={
+	"_id": "asc",
+	"nom": "asc",
+	"prenom": "asc",
+	"telephone": "asc"
+	}
+
+	if(typeof cle !== "undefined" && cle){
+		objOrdre[cle]=ordre;
+	}
+%>
+
+<button class="fonctionnalite"><a href="/detruire">Detruire la liste</a></button>
+<button class="fonctionnalite"><a href="/peupler">Générer un membre</a></button>
+<button class="fonctionnalite" id="bouttonRecherche"><a href="/rechercher">Rechercher</a></button>
+<table class="tableau">
+ <tr>
+ <th class='id'><a href='/trier/_id/<%= objOrdre._id %>'>ID</a></th>
+ <th class='nom'><a href='/trier/nom/<%= objOrdre.nom %>'><%=__('Nom') %></a></th> 
+ <th class='prenom'><a href='/trier/prenom/<%= objOrdre.prenom %>'><%=__('Prenom') %></a></th>
+ <th class='tel'><a href='/trier/telephone/<%= objOrdre.telephone %>'><%=__('Telephone') %></a></th>
+ <th></th>
+ <th></th>
+ </tr>
+ <% adresses.forEach(elm => {%>
+ <tr>
+ <td class='id'><%= elm._id %></td>
+ <td class='nom' contenteditable='true'><%= elm.nom %></td>
+ <td class='prenom' contenteditable='true'><%= elm.prenom %></td>
+ <td class='tel' contenteditable='true'><%= elm.telephone %></td>
+ <td class='supprimer'><a href="/detruire/<%= elm._id %>"><i class="fas fa-trash-alt"></i></a></td>
+ <td class='sauvegarder'><a href="#"><i class="far fa-save"></i></a></td>
+ </tr>
+ <% }) %>
+ </table>
+
+ <form class='mon_formulaire' action="/modifier" name='mon_formulaire' id='mon_formulaire_modifier' method="POST" >
+ <input type = "hidden" placeholder="_id" name = "_id">
+ <input type = "hidden" placeholder="Nom" name = "nom"> 
+ <input type = "hidden" placeholder="Prénom" name = "prenom">
+ <input type = "hidden" placeholder="Téléphone" name = "telephone">
+</form>
+
+<script type="text/javascript">
+ let elmSauver = document.querySelectorAll('.sauver')
+ console.log('elmSauver = ' + elmSauver.length)
+ for (elm of elmSauver)
+ {
+ elm.addEventListener('click', function(){
+
+ let laLigne = this.parentNode.parentNode
+ let id = laLigne.children[0].innerHTML
+ let nom = laLigne.children[1].innerHTML
+ let prenom = laLigne.children[2].innerHTML
+ let telephone = laLigne.children[3].innerHTML
+ let courriel = laLigne.children[4].innerHTML
+
+let elmForm = document.getElementById('mon_formulaire_modifier')
+ console.log(elmForm.tagName)
+ let elmInput = elmForm.querySelectorAll('input')
+ elmInput[0].value = id
+ elmInput[1].value = nom
+ elmInput[2].value = prenom
+ elmInput[3].value = telephone
+ elmInput[4].value = courriel
+
+elmForm.submit()
+
+ })
+ } 
+</script>
