@@ -10,6 +10,7 @@ const peupler = require("./mes_modules/peupler");
 const cookieParser = require('cookie-parser')
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json())
 app.set('view engine', 'ejs'); // générateur de template
 app.use(cookieParser())
 const i18n = require("i18n");
@@ -29,6 +30,19 @@ app.get('/:locale(en|fr)', function(req, res){
   // on peut maintenant traduire
 
   res.redirect(req.get('referer'))
+})
+
+// Une nouvelle route pour traiter la requête AJAX
+
+app.post('/ajax_modifier', (req,res) => {
+   req.body._id = ObjectID(req.body._id)
+
+   db.collection('adresse').save(req.body, (err, result) => {
+   if (err) return console.log(err)
+       console.log('sauvegarder dans la BD')
+   res.send(JSON.stringify(req.body));
+   // res.status(204)
+   })
 })
 
 app.get('/accueil', (req, res) => {
@@ -108,8 +122,6 @@ req.body._id = ObjectID(req.body._id)
 	 db.collection('adresse').save(req.body, (err, result) => 
 	 {
 	 if (err) return console.log(err)
-
-		 console.log('sauvegarder dans la BD')
 		 res.redirect('/adresses')
 	 })
 })
