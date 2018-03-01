@@ -101,6 +101,16 @@ app.get('/trier/:cle/:ordre', (req, res) => {
 	})
 })	
 
+app.post('/ajax_ajout',  (req, res) => {
+ // Preparer l'output en format JSON
+// on utilise l'objet req.body pour récupérer les données POST
+db.collection('adresse').save(req.body, (err, result) => {
+ if (err) return console.log(err)
+ res.redirect('/adresses')
+ })
+
+})
+
 // Une nouvelle route pour traiter la requête AJAX
 
 app.post('/ajax_modifier', (req,res) => {
@@ -129,7 +139,6 @@ app.post('/ajax_detruire', (req, res) => {
  db.collection('adresse').findOneAndDelete({"_id": ObjectID(id)}, (err, resultat) => {
 
 if (err) return console.log(err)
- res.redirect('/adresses')  // redirige vers la route qui affiche la collection
  })
 })	
 
