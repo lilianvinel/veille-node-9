@@ -32,19 +32,6 @@ app.get('/:locale(en|fr)', function(req, res){
   res.redirect(req.get('referer'))
 })
 
-// Une nouvelle route pour traiter la requête AJAX
-
-app.post('/ajax_modifier', (req,res) => {
-   req.body._id = ObjectID(req.body._id)
-
-   db.collection('adresse').save(req.body, (err, result) => {
-   if (err) return console.log(err)
-       console.log('sauvegarder dans la BD')
-   res.send(JSON.stringify(req.body));
-   // res.status(204)
-   })
-})
-
 app.get('/accueil', (req, res) => {
  res.render('accueil.ejs');
 })
@@ -114,19 +101,20 @@ app.get('/trier/:cle/:ordre', (req, res) => {
 	})
 })	
 
-app.post('/modifier', (req, res) => {
-req.body._id = ObjectID(req.body._id)
+// Une nouvelle route pour traiter la requête AJAX
 
-	console.log('util = ' + util.inspect(req.body));
+app.post('/ajax_modifier', (req,res) => {
+   req.body._id = ObjectID(req.body._id)
 
-	 db.collection('adresse').save(req.body, (err, result) => 
-	 {
-	 if (err) return console.log(err)
-		 res.redirect('/adresses')
-	 })
+   console.log('util = ' + util.inspect(req.body));
+
+   db.collection('adresse').save(req.body, (err, result) => {
+   if (err) return console.log(err)
+       console.log('sauvegarder dans la BD')
+   res.send(JSON.stringify(req.body));
+   // res.status(204)
+   })
 })
-
-
 
 app.get('/detruire/', (req, res) => {
  db.collection('adresse').deleteMany({}, (err, resultat) => {
@@ -136,9 +124,8 @@ if (err) return console.log(err)
  })
 })
 
-app.get('/detruire/:id', (req, res) => {
- var id = req.params.id
- console.log(id)
+app.post('/ajax_detruire', (req, res) => {
+ let id = req.body._id;
  db.collection('adresse').findOneAndDelete({"_id": ObjectID(id)}, (err, resultat) => {
 
 if (err) return console.log(err)
