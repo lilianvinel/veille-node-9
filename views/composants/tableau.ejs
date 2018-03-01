@@ -14,21 +14,30 @@
 <button class="fonctionnalite"><a href="/detruire">Detruire la liste</a></button>
 <button class="fonctionnalite"><a href="/peupler">Générer un membre</a></button>
 <button class="fonctionnalite" id="bouttonRecherche"><a href="/rechercher">Rechercher</a></button>
+<button class="fonctionnalite" id="ajout"><a>Ajouter un membre</a></button>
 <table class="tableau">
  <tr>
  <th class='id'><a href='/trier/_id/<%= objOrdre._id %>'>ID</a></th>
- <th class='nom'><a href='/trier/nom/<%= objOrdre.nom %>'><%=__('Nom') %></a></th> 
- <th class='prenom'><a href='/trier/prenom/<%= objOrdre.prenom %>'><%=__('Prenom') %></a></th>
- <th class='tel'><a href='/trier/telephone/<%= objOrdre.telephone %>'><%=__('Telephone') %></a></th>
+ <th><a href='/trier/nom/<%= objOrdre.nom %>'><%=__('Nom') %></a></th> 
+ <th><a href='/trier/prenom/<%= objOrdre.prenom %>'><%=__('Prenom') %></a></th>
+ <th><a href='/trier/telephone/<%= objOrdre.telephone %>'><%=__('Telephone') %></a></th>
  <th></th>
  <th></th>
+ </tr>
+ <tr id="colVide" class="cacher">
+ <td class='id' id="elmLigneDiv"></td>
+ <td id="elmLigneDiv" contenteditable='true'></td>
+ <td id="elmLigneDiv" contenteditable='true'></td>
+ <td id="elmLigneDiv" contenteditable='true'></td>
+ <td class='supprimer'><a><i class="fas fa-trash-alt"></i></a></td>
+ <td class='sauvegarder'><a><i class="far fa-save"></i></a></td>
  </tr>
  <% adresses.forEach(elm => {%>
  <tr>
  <td class='id' id="elmLigneDiv"><%= elm._id %></td>
- <td class='nom' id="elmLigneDiv" contenteditable='true'><%= elm.nom %></td>
- <td class='prenom' id="elmLigneDiv" contenteditable='true'><%= elm.prenom %></td>
- <td class='tel' id="elmLigneDiv" contenteditable='true'><%= elm.telephone %></td>
+ <td id="elmLigneDiv" contenteditable='true'><%= elm.nom %></td>
+ <td id="elmLigneDiv" contenteditable='true'><%= elm.prenom %></td>
+ <td id="elmLigneDiv" contenteditable='true'><%= elm.telephone %></td>
  <td class='supprimer'><a><i class="fas fa-trash-alt"></i></a></td>
  <td class='sauvegarder'><a><i class="far fa-save"></i></a></td>
  </tr>
@@ -42,9 +51,51 @@
  <input type = "hidden" placeholder="Téléphone" name = "telephone">
 </form>
 
-<script type="text/javascript">
+<style type="text/css">
+	.cacher{
+		display: none;
+	}
+</style>
 
-//FONCTION AJAX MODIFIER 
+<script type="text/javascript">
+//FONCTION AJAX AJOUTER
+let boutonAjout = document.querySelector("#ajout")
+let trVide = document.querySelector("#colVide")
+let tableBody = document.querySelector('.tableau').children[0]
+let premierLigne = document.querySelector('.tableau').children[0].children[1]
+boutonAjout.addEventListener('click', function(){
+	let clone = trVide.cloneNode(true)
+	tableBody.insertBefore(clone,premierLigne)
+	let elmSauvegarder = document.querySelectorAll('.sauvegarder')
+	clone.classList.remove("cacher")
+	console.log(elmSauvegarder[0])
+
+elmSauvegarder[0].addEventListener('click', function(){
+
+ let laLigne = this.parentNode
+ console.log(this);
+
+ let nom = laLigne.children[1].innerHTML
+ let prenom = laLigne.children[2].innerHTML
+ let telephone = laLigne.children[3].innerHTML
+
+ xhr = new XMLHttpRequest();
+xhr.open('POST', "ajax_ajout", true);
+let data = {
+ "nom" : nom,
+ "prenom" : prenom,
+ "telephone" : telephone
+}
+
+let sData = JSON.stringify(data);
+xhr.setRequestHeader('Content-type', 'application/json');
+xhr.send(sData);
+
+ })
+})
+
+
+//FONCTION AJAX SUPPRIMER
 let elmSuppr = document.querySelectorAll('.supprimer')
 
 for (elm of elmSuppr)
